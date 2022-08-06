@@ -40,6 +40,8 @@ const saveNote = (note) =>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(note),
+    //.then if( response.ok)then run get notes
+    // if!response.ok alerts request was not complete
   });
 
 const deleteNote = (id) =>
