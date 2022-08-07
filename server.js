@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const uniqid = require('uniqid'); 
-const  notes = require('./db/db.json')
+const notes = require('./db/db.json')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -14,12 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 //can't fetch the body or different properties of fetch request without this
 app.use(express.json());
 
-
-function createNewNote(){
-
-}
-
-
 app.get('/api/notes', (req, res) =>{
     let results = notes;
     console.log(results)
@@ -29,7 +23,6 @@ app.get('/api/notes', (req, res) =>{
 //will receive a new note to save on the req body, add to db.json
 //file then return the new note to the client. Give each note unique id with an npm package.
 app.post('/api/notes', (req, res)=> {
-
 
    // if any data in req.body is incorrect, send 400 error back
    if (!validateNote(req.body)) {
@@ -41,35 +34,42 @@ app.post('/api/notes', (req, res)=> {
 });
 
 
-
-const createNewNote = newNote => {
-    let newNote = {
-        title: req.body.title,
-        text: req.body.description,
+function createNewNote(body, notesArray) {
+    const newNote = {
+        title: body.title,
+        text: body.text,
         id: uniqid()
     };
     //read db to get data saved
-    fs.readFile('/db/db.json', 'utf8', (err, data) =>{
-        if (err){
-            throw err;
-        }else{
-            //convert string to JSON object
-            const parsedNotes = JSON.parse(data);
+    // fs.readFile('/db/db.json', 'utf8', (err, data) =>{
+    //     if (err){
+    //         throw err;
+    //     }else{
+    //         //convert string to JSON object
+    //         const parsedNotes = JSON.parse(data);
 
-            //add new note
-            parsedNotes.push(newNote);
+    //         //add new note
+    //         parsedNotes.push(newNote);
 
+    notesArray.push(note);
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
-        JSON.stringify(parsedNotes, null, 4),
+        JSON.stringify(notesArray, null, 2),
         (err)=>{
             if(err){
                 throw err;
             }else console.info('Successfully added note!');
-            
         }
-    );
+    )
     return newNote;
+};
+
+function validateNote(note){
+    if (!note.title || typeof note.title !== 'string'){
+        return false;
+    }if (!note.text || typeof note.text !=='string'){
+        return false;
+    }
 }
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'))
@@ -84,7 +84,7 @@ app.get('/notes', (req, res) =>{
 //wildcard! Will be directed to the homepage if a path doesn't work out. Must come last!
 app.get('*', (req, res)=>{
     res.sendFile(path.join(__dirname, '.public/index.html'))
-});
+})
 
 
 
