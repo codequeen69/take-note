@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const uniqid = require('uniqid'); 
 const notes = require('./db/db.json')
+const uniqid = require('uniqid'); 
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -25,25 +25,24 @@ app.get('/api/notes', (req, res) =>{
 app.post('/api/notes', (req, res)=> {
 
    // if any data in req.body is incorrect, send 400 error back
-   if (!validateNote(req.body)) {
-    res.status(400).send('The animal is not properly formatted.');
-} else {
+//    //
     const note = createNewNote(req.body, notes);
     res.json(note);
-}
+//}
 });
 
 
 function createNewNote(body, notesArray) {
-    const newNote = {
+    let newNote = {
         title: body.title,
         text: body.text,
         id: uniqid()
     };
-    //read db to get data saved
+    // //read db to get data saved
     // fs.readFile('/db/db.json', 'utf8', (err, data) =>{
     //     if (err){
-    //         throw err;
+    //     console.error(err);
+    //     return;
     //     }else{
     //         //convert string to JSON object
     //         const parsedNotes = JSON.parse(data);
@@ -51,16 +50,11 @@ function createNewNote(body, notesArray) {
     //         //add new note
     //         parsedNotes.push(newNote);
 
-    notesArray.push(note);
+   notesArray.push(newNote);
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
-        JSON.stringify(notesArray, null, 2),
-        (err)=>{
-            if(err){
-                throw err;
-            }else console.info('Successfully added note!');
-        }
-    )
+        JSON.stringify(notesArray, null, 4),
+    );
     return newNote;
 };
 
@@ -71,6 +65,34 @@ function validateNote(note){
         return false;
     }
 }
+
+//delete a note by id
+app.delete('/api/notes/:id', function (req, res){
+ notes.splice(req.params.id, 1);
+ fs.writeFileSync(
+        path.join(__dirname, './db/db.json'),
+        JSON.stringify(notesArray, null, 4),
+    );
+ 
+});
+
+function findById(id, notesArray){
+    const result = notesArray.filter(note => note.id === id)[0];
+    return result;
+    }
+// function deleteNote(id, notesArray) {
+//     for (var i=0; i<notesArray.length; i++) {
+//         let note = notesArray[i];
+//         if(note[i].id == id){
+//           notesArray.splice(i, 1);
+//           fs.writeFileSync(
+//             path.join(__dirname, './db/db.json'),
+//             JSON.stringify(notesArray, null, 2),
+//         );
+//         }
+//     }
+
+// }
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'))
 })
