@@ -16,6 +16,7 @@ Heroku
 ![Screen Shot 2022-08-10 at 10 59 07 AM](https://user-images.githubusercontent.com/104512547/183956999-d9f59ec1-8e3a-45ab-b944-d311e70c028d.png)
 
 ## Website (deployed with Heroku)
+https://warm-plateau-67956.herokuapp.com/
 
 ## Repository
 https://github.com/codequeen69/take-note.git
