@@ -2,7 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const notes = require('./db/db.json')
-const uniqid = require('uniqid');
+
+
+//require  routes
+const apiRoutes = require('./routes/apiRoutes/noteRoutes');
+const htmlRoutes = require('./routes/htmlRoutes/htmlRoutes');
+
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -13,22 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 //can't fetch the body or different properties of fetch request without this
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'))
-})
-
-
-//will return the  notes.html
-app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/notes.html'))
-})
-
-
-//wildcard! Will be directed to the homepage if a path doesn't work out. Must come last!
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '.public/index.html'))
-})
-
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
 
 //makes the server listen
